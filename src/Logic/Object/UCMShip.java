@@ -1,50 +1,71 @@
 package Logic.Object;
+
+import Exceptions.CommandExecuteException;
+import Exceptions.FileContentsException;
+import Logic.Game.Game;
+import Logic.Game.GameObject;
+import Logic.Weapon.SuperMissile;
+import Logic.Weapon.UCMShipLaser;
+import Logic.Weapon.shockWave;
+import Util.FileContentsVerifier;
+
+
+
 /**
  * 
  * @author iker_
  *
  */
 
-public class UCMShip {
-	private int row;
-	private int column;
-	private int resistance;
-	private UCMShipLaser ucmShipLaser;
-	private int damage;
+public class UCMShip extends Ship{
+	private int score;
+	private boolean shoot;
+	//private UCMShipLaser ucmShipLase
+	private int numSuperMissile;
 	private boolean specialShoot;
 	/**
 	 * Constructora de UCMShip
 	 */
-	public UCMShip() {
-		this.row = 7;
-		this.column = 4;
-		this.resistance = 3;
-		this.damage = 1;
-		this.ucmShipLaser = new UCMShipLaser();
+	public UCMShip(Game game,int x, int y) {
+		super(game,y,x,3);
 		this.specialShoot = false;
+		this.numSuperMissile = 0;
+		this.score = 0;
+		this.shoot = false;
 	}
+	
+	public UCMShip() {
+		super(null,-1,-1,0);
+		this.specialShoot = false;
+		this.numSuperMissile = 0;
+		this.score = 0;
+		this.shoot = false;
+	}
+
+	public int getSuperMissile() {
+		return this.numSuperMissile;
+	}
+	public void incSupMis() {
+		this.numSuperMissile++;
+	}
+	
+	//default boolean receiveMissileAttack(int damage) {return false;};
+	@Override 
+	public boolean receiveBombAttack(int damage)
+	{
+		this.getDamage(damage);
+		return true;
+		}
+	//default boolean receiveShockWaveAttack(int damage) {return false;};
 	//Metodos get
-	/**
-	 * 
-	 * @return devuelve la fila
-	 */
-	public int getRow() {
-		return this.row;
+	
+	public void incScore(int points) {
+		score+= points;
 	}
-	/**
-	 * 
-	 * @return devuelve la columna de la posicion del disparo del ucmship
-	 */
-	public int getUCMShipLaserColumn() {
-		return this.ucmShipLaser.getColumn();
+	public int getScore() {
+		return score;
 	}
-	/**
-	 * 
-	 * @return devuelve la fila de la posicion del disparo del ucmship
-	 */
-	public int getUCMShipLaserRow() {
-		return this.ucmShipLaser.getRow();
-	}
+
 	/**
 	 * 
 	 * @return devuelve true si hay el tiro especial shockWave
@@ -52,139 +73,178 @@ public class UCMShip {
 	public boolean getSpecialShoot() {
 		return this.specialShoot;
 	}
-	/**
-	 * 
-	 * @return devuelve la posicion de la columna del ucmship
-	 */
-	public int getColumn() {
-		return this.column;
-	}
-	/**
-	 * 
-	 * @return devuelve la vida actual del ucmship
-	 */
-	public int getResistance() {
-		return this.resistance;
-	}
-	/**
-	 * 
-	 * @return devuelve el da√±o que realiza el ucmship por cada bala
-	 */
-	public int getDamage() {
-		return this.damage;
-	}
+	
+	
+	
 	/**
 	 * 
 	 * @return devuelve la bala del ucmship
 	 */
-	public UCMShipLaser getUCMShipLaser() {
-		return this.ucmShipLaser;
-	}
+
 	/**
 	 * 
 	 * @return devuelve el simbolo del disparo
 	 */
-	public String UCMShipLasertToString() {
-		return ucmShipLaser.toString();
-	}
+
 	//metodos set
 	public void setSpecialShoot(boolean s) {
 		this.specialShoot = s;
 	}
-	public void setRow(int row) {
-		this.row = row;
-	}
 	
-	public void setColumn(int column) {
-		this.column = column;
-	}
-	
-	public void setResistance(int resistance) {
-		this.resistance = resistance;
-	}
-	
-	public void setDamage(int damage) {
-		this.damage = damage;
-	}
-	
-	public boolean move(int dir, int celdas) {
-		if(dir==1) {
-			if(column+celdas <=8) {
-				this.column+=celdas;
-				return true;
-			}
-			return false;
+	public boolean move(int celdas) throws CommandExecuteException {
+		if(y+celdas < 0 || y + celdas >8) {
+			throw new CommandExecuteException("Movimiento invalido por el tamaÒo del tablero");
 		}
-		else {
-			if(column-celdas >=0) {
-				this.column-=celdas;
-				return true;
-			}
-			return false;
-		}
-	}
-	/**
-	 * Si existe un disparo en el tablero, llamo al metodo update del ucmshiplaser para modificar el disparo una posicion
-	 */
-	public void update() {
-		if(ucmShipLaser.getShootUCM()) {
-			ucmShipLaser.update();	
-		}
-	}
-	/**
-	 * 
-	 * @return devuelve true si no habia disparo y te lo crea y false si ya existe una bala en el tablero
-	 */
-	public boolean shoot() {
-		if(!this.ucmShipLaser.getShootUCM()) {
-			this.ucmShipLaser.setShootUCM(true);
-			this.ucmShipLaser.setColumn(this.column);
-			this.ucmShipLaser.setRow(this.row);
-			return true;
-		}
-		return false;
-	}
-	/**
-	 * 
-	 * @param i fila
-	 * @param j columna
-	 * @return devuelve si el ucmship se encuentra en la posicion (i,j)
-	 */
-	public boolean getPosition(int i , int j) {
-		return (row == i && column == j);
+		y += celdas;
+		return true;
 	}
 
-	public void setUCMShipLaser(UCMShipLaser ucm) {
-		this.ucmShipLaser = ucm;
-	}
-	/**
-	 * 
-	 * @param i fila
-	 * @param j columna
-	 * @return devuelve true si la bala del ucmship esta en la posicion (i,j)
-	 */
-	public boolean getPositionShoot(int i , int j) {
-		return ucmShipLaser.getPosition(i,j);
-	}
+	
 	/**
 	 * 
 	 * @return devuelve true si hay bala en el tablero
 	 */
 	public boolean existShoot() {
-		return ucmShipLaser.getShootUCM();
+		return shoot == true;
 	}
-	/**
-	 * en caso de que la vida llegue a cero , cambiamos la imagen del ucmship
-	 */
+
+	@Override
+	public void onDelete() {
+		live = 0;
+	}
+
+
+
+	@Override
 	public String toString() {
-		if (this.resistance > 0) return "^_^";
+		if (this.isAlive()) return "^_^";
 		else return "!xx!";
 	}
-	/**
-	 * 
-	 * @return devuelve true si el jugador se ha quedado sin vidas
-	 */
-	public boolean lose() {
-		return resistance == 0;
+	public String stateToString() {
+		String sw = this.specialShoot ?  "SI" : "NO";
+		return "Life: " + this.getLive() +"\r\n"
+				+ "Points: " + this.score + "\r\n"
+				+ "SuperMisiles:" + this.numSuperMissile 
+				+ "\r\nshockWave: " + sw +"\r\n";
 	}
+	public void special() throws CommandExecuteException  {
+		if(specialShoot) {
+			shockWave wave = new shockWave(this.game,-250,-250,1);
+			this.game.addObject(wave);
+			specialShoot = false;
+		}
+		else {
+			throw new CommandExecuteException("ShockWave no disponible, elimine el Ovni para poder usarlo");
+		}
+	}
+	public void shoot() throws CommandExecuteException {
+		if(!shoot) {
+			UCMShipLaser laser = new UCMShipLaser(this.game,this.x,this.y,1);
+			shoot = true;
+			this.game.addObject(laser);
+		}
+		else {
+			throw new CommandExecuteException("Misil o Supermisil en el tablero, no puedes disparar hasta que desaparezca");
+		}
+	}
+	public void enableMissile() {
+		shoot = false;
+	}
+	public void enableShockWave() {
+		specialShoot = true;
+	}
+
+
+	public boolean payShoot() {
+		return this.score - SuperMissile.POINTS >=0;
+	}
+	public void paySuperMissil() throws CommandExecuteException {
+		if(payShoot()) {
+			decScore();
+			incSupMis();
+		}
+		else {
+			throw new CommandExecuteException("No dispone de puntos suficientes para poder comprar un supermisil.");
+		}
+	}
+
+	public void shootSuperMissil() throws CommandExecuteException {
+		if(!shoot) {
+			if(this.numSuperMissile>0) {
+				shoot = true;
+				SuperMissile misil = new SuperMissile(this.game,this.x,this.y,2);
+				this.numSuperMissile--;
+				this.game.addObject(misil);
+			}
+			else {
+				throw new CommandExecuteException("No dispone de supermisiles en este momento, comprelos por "+ SuperMissile.POINTS+" puntos.");
+			}
+		}
+		else {
+			throw new CommandExecuteException("Misil o Supermisil en el tablero, no puedes disparar hasta que desaparezca");
+		}
+		
+		
+	}
+
+	public void decScore() {
+		score = score - SuperMissile.POINTS;
+	}
+
+	@Override
+	public void computerAction() {
+		// TODO Auto-generated method stub
+		
+	}
+
+	@Override
+	public void move() {
+		// TODO Auto-generated method stub
+		
+	}
+
+//P;x,y;live;points;superpower;missiles
+
+	@Override
+	public String debug() {
+		String sw;
+		if(this.specialShoot)sw = "true";
+		else sw = "false";
+		return "P;"+x+","+y+";"+live+";"+this.score+";"+sw+";"+this.numSuperMissile+"\r\n";
+	}
+
+	@Override
+	//P;7;4;2;false;0
+	public GameObject parse(String stringFromFile, Game game2, FileContentsVerifier verifier) throws FileContentsException {
+		if(stringFromFile.charAt(0)=='P'){
+			String lineFromFile = stringFromFile.substring(2);
+			if(verifier.verifyPlayerString(lineFromFile, game2, live)) {
+				String[] word = lineFromFile.split(";");
+				String[] coords = word[0].split(",");
+				x = Integer.parseInt(coords[0]);
+				y = Integer.parseInt(coords[1]);
+				live = Integer.parseInt(word[1]);
+				score = Integer.parseInt(word[2]);
+				if(word[3].equals("false")) this.specialShoot = false;
+				else this.specialShoot = true;
+				game = game2;
+				this.numSuperMissile = Integer.parseInt(word[4]);
+				game2.newPlayer(this);
+				return this;
+			}
+			else {
+				throw new FileContentsException("Juego corrompido, imposible cargar la partida");
+			}
+		}
+		return null;
+		
+	}
+
+	@Override
+	public boolean getDireccion() {
+		// TODO Auto-generated method stub
+		return false;
+	}
+
+
 }

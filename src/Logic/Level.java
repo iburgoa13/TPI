@@ -1,37 +1,73 @@
 package Logic;
 
 public enum Level {
-	EASY(4,2,1,3,5),HARD(8,2,3,2,2),INSANE(8,4,5,1,1);
-	private int numRegShip,numDesShip, velCiclo;
-	private int frecShootDes, frecOvni;
+	 
+	EASY(4, 2, 0.2, 3, 0.5, 1), 
+	HARD(8, 4, 0.3, 2, 0.2, 2),
+	INSANE(12, 4, 0.5, 1, 0.1, 3);
+
+	private int numRegularAliens;
+	private int numDestroyerAliens;
+	private int numCyclesToMoveOneCell;
+	private double ovniFrequency;
+	private double shootFrequency;
+	private int numRowsOfRegularAliens;
+	private Level(
+			int numRegularAliens, 
+			int numDestroyerAliens, 
+			double shootFrequency, 
+			int numCyclesToMoveOneCell, 
+			double ovniFrequency, 
+			int numRowsOfRegularAliens)
+	{
+		this.numRegularAliens = numRegularAliens;
+		this.numDestroyerAliens = numDestroyerAliens;
+		this.shootFrequency = shootFrequency;
+		this.numCyclesToMoveOneCell = numCyclesToMoveOneCell;
+		this.ovniFrequency = ovniFrequency;
+		this.numRowsOfRegularAliens = numRowsOfRegularAliens;
+	}
 	
-	private Level(int size,int sizeD, int fc, int vel,int fo) {
-		this.numRegShip = size;
-		this.numDesShip = sizeD;
-		this.frecShootDes = fc;
-		this.velCiclo = vel;
-		this.frecOvni = fo;
+
+	public int getNumRegularAliens() {
+		return numRegularAliens;
+	}
+	
+	public int getNumDestroyerAliens() {
+		return numDestroyerAliens;
 	}
 
-	public int getNumRegularShip() {
-		return this.numRegShip;
+	public Double getShootFrequency() {
+		return shootFrequency;
 	}
-	public int getNumDesShip() {
-		return this.numDesShip;
+	
+	public int getNumCyclesToMoveOneCell() {
+		return numCyclesToMoveOneCell;
 	}
-	public int getVelCicle() {
-		return this.velCiclo;
+
+	public Double getOvniFrequency() { 
+		return ovniFrequency;
 	}
-	public int getFrecOvni() {
-		return this.frecOvni;
+	public int getNumRowsOfRegularAliens() {
+		return numRowsOfRegularAliens;
 	}
-	public int getFrecShootDes() {
-		return this.frecShootDes;
+	
+	public int getNumRegularAliensPerRow() {
+		return numRegularAliens / numRowsOfRegularAliens;
 	}
-	public static Level select(String level) {
-		if(level.equals("EASY")) return Level.EASY;
-		if(level.equals("HARD")) return Level.HARD;
-		if(level.equals("INSANE")) return Level.INSANE;
-		else return Level.EASY;
+	
+	public int  getNumDestroyerAliensPerRow() {
+		return getNumDestroyerAliens();
+	}
+	
+	public static Level fromParam(String param) {
+		for (Level level : Level.values())
+			if (level.name().equalsIgnoreCase(param)) return level;
+	    return null;
+	}
+
+	public int getTurnExplodeFreq(){
+		return 5;//return 0.05;
 	}
 }
+
