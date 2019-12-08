@@ -1,0 +1,5 @@
+de la clase GameObjectBoard quitar los .getClass()
+
+a la hora de salvar y cargar partida, las bombas cuando están siendo guardadas, no están asociadas a ninguna nave
+y la nave aunque en el save haya disparado, cuando hace load no asocias la nave con la bomba, entonces tienes que cambiar 
+eso. asociar la nave con la bomba
